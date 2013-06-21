@@ -1,0 +1,22 @@
+extends layout
+
+block content
+  div
+   each tableUnit in listOfTables
+    label
+     | #{tableUnit[0]}
+    table(border=1)
+     tr
+      each fields in tableUnit[1]
+       td= fields.name
+     - var currentIndex = 0
+     tr
+      each results in tableUnit[2]
+       each result in results
+        if (typeof(result)=='object')
+         td
+          a(href = result.hrefValue)
+           | #{result.textValue}
+        else
+         td= result
+       |</tr><tr>

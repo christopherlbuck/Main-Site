@@ -1,0 +1,118 @@
+extends layout
+block content
+	script(type="text/javascript", src="http://code.jquery.com/jquery-latest.min.js")
+	script(type= "text/javascript")
+		var arrayListPlayers=new Array();
+		var thisUser = '#{userName}';
+		function populatePlayers(id)
+		{
+			//$("div#divPlayers").append(document.getElementById(id).value);
+			//I've hard coded chess game
+			//requires ajax server
+			//##TODO write dynamic additions with ajax
+			
+			
+			//Destroy current players
+			$("div#divPlayers").empty();
+			
+			//Create new players
+			$("div#divPlayers").append("<div id=\"PlayersNum\"/>");
+			
+			//Ajax call to find min & max
+			//##
+			
+			//Hard coded values of min & max
+			var min = 2;
+			var max = 2;
+			
+			//Create dropdown box for number of players
+			$("div#PlayersNum").append('Number of Players: <select onchange=\"populatePlayerFields()\" id=\"dropNumPlayers\" name=\"dropNumPlayers\"> </select>');
+			populateDropDownNumPlayers(min,max);
+			
+			//Creating a div I can empty upon changing the number of players I want to challenge
+			$("div#divPlayers").append("<div id=\"PlayersChallenge\"/>");
+			
+			
+			
+			/*$("div#dropNumPlayers").bind("change",
+				function(){
+					alert("Are you testing me?");
+				});
+			
+			
+			$("div#dropNumPlayers").bind("change",
+				function(min,max){
+					for(var i=min;i<max+1;i+=2){
+						$("#dropNumPlayers").append("<option id=\""+arrayListPlayers[i]+"\">"+arrayListPlayers[i+1]+"</option>");
+					}
+				});*/
+		}
+		
+		function populateDropDownNumPlayers(min,max){
+			populatePlayersArray();
+			$("#dropNumPlayers").append("<option> </option>");
+			for(var i=min;i<max+1;i++){
+				$("#dropNumPlayers").append("<option>"+i+"</option>");
+			}
+			
+		}
+		function populatePlayersArray(){
+			//Empty player array
+			//alert(arrayListPlayers.length);
+			arrayListPlayers=new Array();
+			
+			//Ajax call to find all players, exclude current user
+			//##
+			//At some point might want to create a deny or access only certain games table
+			
+			//Hard-coded all players
+			arrayListPlayers.push("1");
+			arrayListPlayers.push("adminBuck");
+			arrayListPlayers.push("2");
+			arrayListPlayers.push("adminV");
+			
+			//alert(arrayListPlayers.length);
+			
+		}
+		function populatePlayerFields(){
+			//test();
+			
+			//Empty div as a new value has been selected
+			$("div#PlayersChallenge").empty();
+			
+			//Cycle through the value select reduced by one, yourself
+			var intChallengers = $("#dropNumPlayers").val() -1 ;
+			
+			//Cycle through adding each person
+			var intPeopleToPlay=arrayListPlayers.length/2;
+			
+			//Populate the Challenger div
+			$("div#PlayersChallenge").append('Who do you challenge:');
+			for(var i=0;i<intChallengers;i++){
+				$("div#PlayersChallenge").append('<br> <select onchange=\"test()\" id=\"challengerPlayer'+(i+1)+'\" name=\"challengerPlayer'+(i+1)+'\"> </select>');
+				for(var j=0;j<intPeopleToPlay;j++){
+					if(thisUser!=arrayListPlayers[j*2+1]){
+						//alert("challengerPlayer"+(i+1)+" and user:"+thisUser+ " testing user:"+arrayListPlayers[j*2+1]);
+						var strDropBox="#challengerPlayer"+(i+1);
+						$(strDropBox).append('<option value='+arrayListPlayers[j*2]+'>'+arrayListPlayers[j*2+1]+'</option>');
+					}
+				}
+			}
+		}
+		function test(){
+			alert("Are you testing me?");
+		}
+	title= title
+	form(action="/game/create", method="post")
+		label()
+			| Game:
+		select(onchange="populatePlayers(this.id)", id="gameSelected", name="gameSelected")
+			option( value ="" )
+				| 
+			each game in games
+				option( value = game.ID, name= game.Name)
+					| #{game.Name}
+		div(id="divPlayers")
+			div(id="Players")
+		div
+			input(type="submit", value="Submit")

@@ -1,0 +1,17 @@
+extends layout
+
+block content
+	form(action="/login", method="post")
+		div
+			input(type="text", hidden, name="priorURL", value=referred)
+			label
+				| Username:
+			input(type="text", name="username")
+			br
+		div
+			label
+				| Password:
+			input(type="text", name="password", value="a")
+			br
+		div
+			input(type="submit", value="Submit")
