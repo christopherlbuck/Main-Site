@@ -8,6 +8,7 @@ Navigate to app.js directory execute 'npm install'
 Step 3
 Download & Install MySQL
 http://dev.mysql.com/downloads/installer/
+(mysql-installer-community-5.6.12.0.msi)
 
 Step 4 (skippable)
 Modify PATH to include MySQL path
@@ -18,3 +19,4 @@ Import database
 
 Step 6
 Export database
+mysqldump.exe -u root -p <*databasename*> > <*location*>\<*file*>.sql
