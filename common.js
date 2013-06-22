@@ -51,5 +51,43 @@ exports.CL = function(booleanValue, write){
 	}
 }
 
+exports.sendHTMLFile = function(res,fileLocation) {
+	var thingsToDo = 2;
+	var setThisHeader = function(){
+		res.setHeader("Content-Type", "text/html");
+		thingsToDo--;
+		respond(endIt);
+	}
+	var writeThisHeader = function(){
+		res.writeHeader(200, {"Content-Type": "text/html"});  
+		thingsToDo--;
+		respond(endIt);
+	}	
+	var respond = function(callback){
+		if (thingsToDo==0){
+			fs = require('fs')
+			//fs.readFile(__dirname+'/public/skillCoverage.html',function(err,data){
+			fs.readFile(__dirname+fileLocation,function(err,data){
+			
+				if (err) throw err;
+				res.write(data);
+				callback();
+			});
+		}
+	};
+	var endIt = function(){
+		res.end();
+	}
+  	setThisHeader();
+	writeThisHeader();
+}
+
+exports.resRenderUserName = function(req,res,rendering,list){
+	if (typeof(req.session.userName) != 'undefined'){
+		list.userName=req.session.userName;
+	}
+	res.render(rendering,list);
+}
+
 
 	

@@ -29,6 +29,11 @@ block content
 		div
 			input(type="submit", value="Submit")
 	table(border=1)
+		label
+			if(myTurn)
+				| It's not your turn
+			else
+				| You know, your opponent is waiting for you to play, #{userName}
 		tr
 			each row in boardState
 				each cell in row

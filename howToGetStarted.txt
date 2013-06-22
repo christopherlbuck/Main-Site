@@ -15,8 +15,18 @@ Modify PATH to include MySQL path
 <TBD> (I'm lazy currently)
 
 Step 5
-Import database
+Create required databases
+mysql.exe -u <your username> -p
+create database serverinfo;
+create database games;
+create database dnd;
 
-Step 6
+Step 5
+Import database
+mysql.exe -u <your username> -p dnd < <dnd sql file>
+mysql.exe -u <your username> -p games < <games sql file>
+mysql.exe -u <your username> -p serverinfo < <serverinfo sql file>
+
+Step 7
 Export database
 mysqldump.exe -u root -p <*databasename*> > <*location*>\<*file*>.sql
