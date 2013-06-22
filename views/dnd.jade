@@ -1,0 +1,45 @@
+extends layout
+
+block content
+  h1= title
+  if (typeof(inputForm)!='undefined')
+   div
+    form(action='/dnd/tags', method='post')
+     label
+      | New tag name:
+     input(type="text", name="newtagname")
+     div
+      input(type="submit", value="Submit")
+  if (typeof(inputForm)!='undefined')
+   div
+    form(action='/dnd/notes', method='post')
+     label
+      | Note <br>
+     textarea(maxlength=250, cols="50", name="note", rows="6")
+     br
+     each checkbox in tags
+      label
+       | #{checkbox.name}
+      input(type="checkbox",name= 'tag'+checkbox.id)
+     br
+     |<input type='submit' value='Add Note' 
+     if (typeof(userName) == 'undefined')
+      | disabled
+     |>
+   <br><br>
+  div
+   table(border=1)
+    tr
+     each fields in tableFields
+      td= fields.name
+    - var currentIndex = 0
+    tr
+     each results in tableData
+      each result in results
+       if (typeof(result)=='object')
+        td
+         a(href = result.hrefValue)
+          | #{result.textValue}
+       else
+        td= result
+      |</tr><tr>

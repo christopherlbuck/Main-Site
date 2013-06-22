@@ -1,0 +1,39 @@
+extends layout
+block content
+	script(type= "text/javascript")
+		function cellChangeColor(id,color){
+			document.getElementById(id).setAttribute("bgcolor",color);
+		}
+		function select(id){
+			if(document.getElementById("lbFirst").getAttribute("value")==""){
+				cellChangeColor(id,"red");
+				document.getElementById("lbFirst").setAttribute("value",id);
+			}
+			else if(document.getElementById("lbFirst").getAttribute("value")==id && document.getElementById("lbSecond").getAttribute("value")==""){
+				document.getElementById("lbFirst").setAttribute("value","");
+				cellChangeColor(id,"white");
+			}
+			else if(document.getElementById("lbSecond").getAttribute("value")==""){
+				cellChangeColor(id,"orange");
+				document.getElementById("lbSecond").setAttribute("value",id);
+			}
+			else if(document.getElementById("lbSecond").getAttribute("value")==id){
+				document.getElementById("lbSecond").setAttribute("value","");
+				cellChangeColor(id,"white");
+			}
+		}
+	form(action="/game/chess", method="post")
+		input(type="test", id= "gameID", name= "gameID", value="#{id}",hidden)
+		input(type="text", id= "lbFirst", name= "lbFirst", value="",hidden)
+		input(type="text", id= "lbSecond", name= "lbSecond", value="",hidden)
+		div
+			input(type="submit", value="Submit")
+	table(border=1)
+		tr
+			each row in boardState
+				each cell in row
+					| #{locals.index}
+					td(height="40", width="40", onclick="select(this.id)", id= (indexValue+=1))
+						center
+							| #{cell} 
+				| </tr><tr>

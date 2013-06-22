@@ -1,0 +1,17 @@
+extends layout
+
+block content
+	div
+		//each resultRow in additionForm
+			//|<#{resultRow.openTag} #{resultRow.variables}>			
+	div
+		table(border=1)
+			tr
+				each fields in tableFields
+					td= fields.name
+			tr
+				each results in tableData
+					each result in results
+						td= result
+					| </tr><tr>
+

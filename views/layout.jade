@@ -1,0 +1,15 @@
+doctype 5
+html
+	head
+		title= title
+		link(rel='stylesheet', href='/stylesheets/style.css')
+	body
+		div
+			p(align='right')
+				if (typeof(userName) !== 'undefined')
+					| <a href="/dnd/notes">[DnD]</a>
+					| <a href="/game/myGames">[My Games]</a> Welcome #{userName}
+				else
+					| Welcome Guest
+					| <br> <a href="/login">Log-in</a>
+		block content
