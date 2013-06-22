@@ -1,3 +1,20 @@
 Step 1:
-Install node
+Download & Install node (I used the msi installer) [Node msi automatically modifies PATH]
 http://nodejs.org/download/
+
+Step 2 (if first install or update to package.json file):
+Navigate to app.js directory execute 'npm install'
+
+Step 3
+Download & Install MySQL
+http://dev.mysql.com/downloads/installer/
+
+Step 4 (skippable)
+Modify PATH to include MySQL path
+<TBD> (I'm lazy currently)
+
+Step 5
+Import database
+
+Step 6
+Export database

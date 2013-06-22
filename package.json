@@ -1,6 +1,6 @@
 {
   "name": "gameServer",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "scripts": {
     "start": "node app.js"
@@ -9,6 +9,11 @@
     "express": "3.2.4",
     "jade": "*",
 	"mysql": "*",
-	"passport : "*"
+	"passport" : "*",
+	"passport-local" : "*"
+  },
+  "notes" : {
+	"0.0.1": "initial",
+	"0.0.2": "included dependencies as of 6/22"
   }
 }
