@@ -1,3 +1,5 @@
+include 
+
 var mysql = require('mysql');
 var output = '';
 var url = require('url');
@@ -9,10 +11,6 @@ var CL = function(booleanValue, write){
 		console.log(write);
 	}
 }
-
-
-
-
 var resRenderUserName = function(req,res,rendering,list){
 	var debugThisSection = false;
 	CL(debugThisSection, 'resRenderUserName: reached.')

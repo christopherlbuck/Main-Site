@@ -1,15 +1,20 @@
 
+
 /**
  * Module dependencies.
  */
-var express = require('express')
-  , passport = require('passport')
-  , routes = require('./routes')
-  , user = require('./routes/user')
-  , http = require('http')
-  , path = require('path')
-  , url = require('url')
-  , LocalStrategy = require('passport-local').Strategy;
+var express = require('express'),
+    passport = require('passport'),
+    routes = require('./routes'),
+    user = require('./routes/user'),
+    http = require('http'),
+    path = require('path'),
+    url = require('url'),
+    LocalStrategy = require('passport-local').Strategy,
+    common = require('./common'),
+    CL = common.CL,
+	sqlQuery = common.sqlQuery,
+	sqlEscape = common.sqlEscape;
   
 
 
@@ -238,9 +243,22 @@ app.post('/login', function(req,res){
 	database: 'serverinfo'
 	});
 	
-	var loginRedirectTest ='/game/chess?id=5';
-	CL(dpLogin,'req.url:'+req.url);
+	//Local server w/o mySQL Debug
+	var loginRedirectTest ='/';
 	var loginRedirectTest = req.body.priorURL;
+	if(req.body.username=='AJ'){
+		req.session.userName=sqlEscape(req.body.username);
+		req.session.user={
+					id : -1
+				}
+		res.redirect(loginRedirectTest);
+	}
+	
+	
+	
+	
+	CL(dpLogin,'req.url:'+req.url);
+	
 	
 	CL(dpLogin,'login-referer:'+loginRedirectTest);
 	
@@ -261,6 +279,7 @@ app.post('/login', function(req,res){
 				//res.redirect('/');
 				res.redirect(loginRedirectTest);
 			}
+			
 			else{
 				console.log('App.js/login post: req.session.userName value:'+req.session.userName);
 				res.redirect('/login');
@@ -330,7 +349,7 @@ http.createServer(app).listen(app.get('port'), function(){
 //	MySQL queries			:	sqlQuery(database,query,booToReturnFields)
 //	Taking input from POSTs	:	sqlEscape
 
-var sqlEscape = function(stringThis){
+/*var sqlEscape = function(stringThis){
 	if(typeof(stringThis)== 'undefined'){
 		return '';
 	}
@@ -369,14 +388,14 @@ var sqlQuery = function(databaseName,SQLquery, boolReturn, callback){
 		}
 	);
 
-}
+}*/
 
 
-var CL = function(booleanValue, write){
+/*var CL = function(booleanValue, write){
 	if(booleanValue){
 		console.log(write);
 	}
-}
+}*/
 
 
 	
