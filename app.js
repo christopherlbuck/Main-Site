@@ -46,8 +46,7 @@ var ensureAuthenticated = function(req, res, next) {
 var app = express(),
 	mysql = require('mysql');
 
-//Ajax app variable
-//Not needed
+
 
 //Session requirements
 app.use(express.cookieParser());
@@ -332,70 +331,14 @@ app.post('/game/create',ensureAuthenticated, function(req,res){
 	CL(debugCR,'PostCreation-q1 return typeof:'+ typeof(q1r));
 });
 
-//Ajax server
-
 
 //Web server
 http.createServer(app).listen(app.get('port'), function(){
-  console.log('Express server listening on port ' + app.get('port'));
+  console.log('Express server (app) listening on port ' + app.get('port'));
 });
 
 
 
-
-
-//Required functions for
-//	Debug					:	CL(booleanToPrint,TextToPrint)
-//	MySQL queries			:	sqlQuery(database,query,booToReturnFields)
-//	Taking input from POSTs	:	sqlEscape
-
-/*var sqlEscape = function(stringThis){
-	if(typeof(stringThis)== 'undefined'){
-		return '';
-	}
-    return stringThis.replace(/['";]/g, function (match) {
-        return '\\' + match;
-    });
-};
-
-var sqlQuery = function(databaseName,SQLquery, boolReturn, callback){
-	//Debug section
-	var debugSQLQ=false;
-	var pH='sqlQuery-';//prompt Header
-	
-	var client = mysql.createConnection({
-	    host: dbHost,
-	    user: dbUser,
-	    password: dbPassword,
-		database: databaseName
-	});
-	
-	//Body of function
-	var arrReturn = new Array();
-	var timePeriod=10000;
-	client.query(SQLquery,
-		function(err, results, fields) {
-			CL(debugSQLQ,pH+'Inside of Client.query arrReturn.length:'+arrReturn.length);
-			CL(debugSQLQ,pH + 'typeof(arrReturn):'+typeof(arrReturn));
-			CL(debugSQLQ,pH + 'typeof(arrReturn[0]):'+typeof(arrReturn[0]));
-			if(boolReturn==true){
-				callback(fields,results);
-			}
-			else{
-				callback();
-			}
-			client.end();
-		}
-	);
-
-}*/
-
-
-/*var CL = function(booleanValue, write){
-	if(booleanValue){
-		console.log(write);
-	}
-}*/
 
 
 	

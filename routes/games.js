@@ -1,16 +1,16 @@
-include 
 
-var mysql = require('mysql');
-var output = '';
-var url = require('url');
-var emptyTableCell = '&nbsp;';
-var debug=true;
+var mysql = require('mysql'),
+	output = '',
+	url = require('url'),
+	emptyTableCell = '&nbsp;',
+	debug=true,
+    common = require('./common'),
+    CL = common.CL,
+	sqlQuery = common.sqlQuery,
+	sqlEscape = common.sqlEscape;
+	
 
-var CL = function(booleanValue, write){
-	if(debug && booleanValue){
-		console.log(write);
-	}
-}
+
 var resRenderUserName = function(req,res,rendering,list){
 	var debugThisSection = false;
 	CL(debugThisSection, 'resRenderUserName: reached.')
@@ -127,118 +127,9 @@ exports.myGamesMultiTable = function(req,res){
 }
 
 
-exports.seriouslyyoufail = function(req,res){
-	//Debug section
-	var debugThis = false;
-	var pH='SeriouslyYouFail-';
-	
-	//res.render('layout', {title:'You Fail'});
-	var q1='select name from youfail, (SELECT FLOOR(MAX(youfail.id) * RAND()) AS randId FROM youfail) AS someRandId WHERE youfail.id = someRandId.randId+1 	'
-	CL(debugThis,pH+'q1:'+q1);
-	sqlQuery('serverinfo',q1,function(fields,results){
-		CL(debugThis,pH+'result:'+results);
-		resRenderUserName(req,res,'index',{title: 'You Fail', message: results[0].name});
-	});
-}
 
-exports.login = function(req,res){
-	//res.render('login',{title: 'Login'})
-	resRenderUserName(req,res,'login',{title: 'Login', referred : url.parse(req.url, true).query.urlPath})
-};
 
-exports.index = function(req, res){
-  //res.render('index', { title: 'Express' });
-  resRenderUserName(req,res,'index',{ title: 'Express', message :'' })
-};
 
-exports.dnd = function(req, res){
-  //var result;
-  var sendTableFields = new Array();
-  var sendResults = new Array();
-  //Get note list
-  var client = mysql.createConnection({
-    host: dbHost,
-    user: dbUser,
-    password: dbPassword,
-	database: 'dnd'
-	});
-	var sql = 'select date_format(dateTime,\'%Y-%m-%d %r \') as \'Date added\' , note as Note from notes order by dateTime desc';
-  client.query(sql,
-   function(err, results, fields) {
-    if (err) throw err;
-	//console.log(String.fromCharCode(1))
-	sendResults= results.slice(0);
-	sendTableFields = fields.slice(0);
-	//console.log(fields);
-	res.render('DND', { title: 'DnD Stuff', tableFields : fields , tableData : results, additionForm : {}});
-   }
-  );
-  client.end();
-  //console.log(sendTableFields);
-  
-  //Get not addition list
-  var sendAddition = new Array();
-    var client = mysql.createConnection({
-    host: dbHost,
-    user: dbUser,
-    password: dbPassword,
-	database: 'dnd'
-	});
-	var sql = 'select * from notesaddition order by id';
-  client.query(sql,
-   function(err, results, fields) {
-    if (err) throw err;
-	sendAddition = results;
-   }
-  );
-  client.end();
-  res.render('DND', { title: 'DnD Stuff', tableFields : {} , tableData : {}, additionForm : sendAddition});
-};
-
-exports.dnd_notes = function(req, res){
-  //var result;
-  var sendTableFields = new Array();
-  var sendResults = new Array();
-  //Get note list
-  var client = mysql.createConnection({
-    host: dbHost,
-    user: dbUser,
-    password: dbPassword,
-	database: 'dnd'
-	});
-	var sql = 'select id,date_format(dateTime,\'%Y-%m-%d %r \') as \'Date added\' , note as Note, submittedByUserID as User from notes order by dateTime desc';
-  client.query(sql,
-   function(err, results, fields) {
-    if (err) throw err;
-	sendResults= results.slice(0);
-	sendTableFields = fields.slice(0);
-	var q1 = 'select id, name from notestag where active=1';
-	sqlQuery('dnd',q1, function(q1fields,q1results){
-		resRenderUserName(req,res,'DND', { title: 'DnD Stuffs', tableFields : fields , tableData : results,inputForm:'', tags : q1results});
-	});
-	
-   }
-  );
-  client.end();
-  //console.log(sendTableFields);
-  
-  //Get not addition list
-  var sendAddition = new Array();
-    var client = mysql.createConnection({
-    host: dbHost,
-    user: dbUser,
-    password: dbPassword,
-	database: 'dnd'
-	});
-	var sql = 'select * from notesaddition order by id';
-  client.query(sql,
-   function(err, results, fields) {
-    if (err) throw err;
-	sendAddition = results;
-   }
-  );
-  client.end();
-};
 
 exports.gameChess = function(req, res){
 	var debugChess=false;
@@ -369,29 +260,4 @@ exports.gameCreation = function(req, res){
 	CL(dGC,"gameCreation : Sending response");
 	//resRenderUserName(req,res,'gameCreation',{title:'Create Game', games:waitForArray[0]})
 	client.end();
-}
-
-var sqlQuery = function(databaseName,SQLquery, callback){
-	var debugSQLH =false;
-	var pH='sqlQueryHeader-';
-	var client = mysql.createConnection({
-	    host: dbHost,
-	    user: dbUser,
-	    password: dbPassword,
-		database: databaseName
-	});
-	client.query(SQLquery,
-		function(err, results, fields) {
-			callback(fields,results);
-	});
-	
-	client.end();
-}
-
-exports.skills = function(req,res){
-	//Debug section
-	var dT = true;
-	var pH = 'skills-';
-	res.sendfile(__dirname+'../public/pages/skillCoverage.txt');
-	//resRenderUserName(req,res,'layout',{title:'Skills'})
 }

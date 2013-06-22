@@ -2,13 +2,17 @@ var mysql = require('mysql');
 var output = '';
 var url = require('url');
 var emptyTableCell = '&nbsp;';
-var debug=true;
+var debug=true,
+	games = './games.js';
+	
+var common = require('../common'),
+    CL = common.CL,
+	sqlQuery = common.sqlQuery,
+	sqlEscape = common.sqlEscape;
+	
+exports.myGames = games.myGames;
+exports.gameChess = games.gameChess;
 
-var CL = function(booleanValue, write){
-	if(debug && booleanValue){
-		console.log(write);
-	}
-}
 
 
 
@@ -39,29 +43,6 @@ var dbUser = 'root';
 var dbPassword = 'akrontacos';
 var dbTable = 'world';
 
-exports.myGames = function(req,res){
-	//Debug section
-	var dmG =true;
-	var pH ='GetmyGames-';
-	
-	//Currently checks chess only by checking chessgamestate table
-	//Check invites table when created
-	var q1='select id, player1ID, player2ID from chessgamestate where winner=0 and (player1ID = '+req.session.user.id+ ' or player2ID = '+req.session.user.id+')';
-	CL(dmG,pH+'q1:'+q1);
-	sqlQuery('games',q1,true,function(fields,results){
-		for(var i=0;i<results.length;i++){
-			var thisID = results[i].id;
-			//results[i].id="þ<a href=\"/games/chess?id="+thisID+"\">"+thisID+'</a>';
-			results[i].id={
-				filler:"þ",
-				hrefValue:'/game/chess?id='+thisID,
-				textValue:thisID
-			}
-			CL(dmG,pH+'results[i].id new value:'+results[i].id);
-		}
-		resRenderUserName(req,res,'DND', { title: 'Your Open Games', tableFields : fields , tableData : results})
-	});
-}
 
 exports.myGamesMultiTable = function(req,res){
 	//Debug section
@@ -425,4 +406,28 @@ var sqlQuery = function(databaseName,SQLquery, boolReturn, callback){
 		}
 	);
 
+}
+
+exports.myGames = function(req,res){
+	//Debug section
+	var dmG =true;
+	var pH ='GetmyGames-';
+	
+	//Currently checks chess only by checking chessgamestate table
+	//Check invites table when created
+	var q1='select id, player1ID, player2ID from chessgamestate where winner=0 and (player1ID = '+req.session.user.id+ ' or player2ID = '+req.session.user.id+')';
+	CL(dmG,pH+'q1:'+q1);
+	sqlQuery('games',q1, function(fields,results){
+		for(var i=0;i<results.length;i++){
+			var thisID = results[i].id;
+			//results[i].id="þ<a href=\"/games/chess?id="+thisID+"\">"+thisID+'</a>';
+			results[i].id={
+				filler:"þ",
+				hrefValue:'/game/chess?id='+thisID,
+				textValue:thisID
+			}
+			CL(dmG,pH+'results[i].id new value:'+results[i].id);
+		}
+		resRenderUserName(req,res,'DND', { title: 'Your Open Games', tableFields : fields , tableData : results})
+	});
 }
