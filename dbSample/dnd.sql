@@ -38,7 +38,7 @@ CREATE TABLE `notes` (
 
 LOCK TABLES `notes` WRITE;
 /*!40000 ALTER TABLE `notes` DISABLE KEYS */;
-INSERT INTO `notes` VALUES (16,'THIS IS A NOTE',NULL,'2013-05-31 00:00:34',0),(17,'Apparently only alphanumeric characters or you crash the server fyi',NULL,'2013-05-31 10:31:52',0),(18,'now it\'s working',NULL,'2013-05-31 22:52:57',0),(19,'now it\'s working',NULL,'2013-05-31 22:52:59',0),(20,'<script>alert(\'hello\');</script>',NULL,'2013-05-31 22:53:34',0),(21,'<>?:\"{}|~!@#$%^&*()_+,./;\'[]`1234567890-=qwertyuiopasdfghjkl;zxcvbnm,.',NULL,'2013-06-02 17:19:45',0),(22,'',NULL,'2013-06-02 23:07:17',0),(23,'test',NULL,'2013-06-21 20:51:27',0),(24,'Test what?',NULL,'2013-06-21 20:59:18',1),(25,'You tested it and it worked!',NULL,'2013-06-21 21:00:56',1),(26,'You keep crashing it!',NULL,'2013-06-21 21:05:31',1),(27,'Jesus debug too?',NULL,'2013-06-21 21:07:12',1),(28,'test this again',NULL,'2013-06-21 22:47:41',1),(29,'Should work now',NULL,'2013-06-21 22:49:49',1),(30,'Surprisingly it does work again!',NULL,'2013-06-21 22:50:07',1),(31,'Still works',NULL,'2013-06-21 22:55:52',1);
+INSERT INTO `notes` VALUES (24,'Test what?',NULL,'2013-06-21 20:59:18',1),(25,'You tested it and it worked!',NULL,'2013-06-21 21:00:56',1),(26,'You keep crashing it!',NULL,'2013-06-21 21:05:31',1),(27,'Jesus debug too?',NULL,'2013-06-21 21:07:12',1),(28,'test this again',NULL,'2013-06-21 22:47:41',1),(29,'Should work now',NULL,'2013-06-21 22:49:49',1),(30,'Surprisingly it does work again!',NULL,'2013-06-21 22:50:07',1),(31,'Still works',NULL,'2013-06-21 22:55:52',1);
 /*!40000 ALTER TABLE `notes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -91,6 +91,34 @@ LOCK TABLES `notestag` WRITE;
 INSERT INTO `notestag` VALUES (1,'Buck',1),(2,'Taco',1),(3,'thistag',1),(4,'Archive',1),(5,'Food',1);
 /*!40000 ALTER TABLE `notestag` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `skills`
+--
+
+DROP TABLE IF EXISTS `skills`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `skills` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
+  `player` varchar(255) DEFAULT 'None',
+  `value` int(11) DEFAULT '0',
+  `trained` tinyint(1) DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `skills`
+--
+
+LOCK TABLES `skills` WRITE;
+/*!40000 ALTER TABLE `skills` DISABLE KEYS */;
+INSERT INTO `skills` VALUES (1,'Acrobatics','None',0,0),(2,'Arcana','None',0,0),(3,'Athletics','None',0,0),(4,'Bluff','None',0,0),(5,'Diplomacy','None',0,0),(6,'Dungeoneering','None',0,0),(7,'Endurance','None',0,0),(8,'Heal','None',0,0),(9,'History','None',0,0),(10,'Insight','None',0,0),(11,'Intimidate','None',0,0),(12,'Leadership','None',0,0),(13,'Nature','None',0,0),(14,'Perception','None',0,0),(15,'Religion','None',0,0),(16,'Stealth','None',0,0),(17,'Streetwise','None',0,0),(18,'Thievery','None',0,0),(19,'Tinkering','None',0,0);
+/*!40000 ALTER TABLE `skills` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -101,4 +129,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-06-22 15:28:01
+-- Dump completed on 2013-06-23 15:14:39
