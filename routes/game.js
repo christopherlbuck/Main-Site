@@ -149,3 +149,29 @@ exports.gameCreation = function(req, res){
 exports.skills = function(req,res){
 	sendHTMLFile(res,'/public/skillCoverage.html');
 }
+
+exports.gameChessTest = function(req, res){
+	//Send requires the following:
+	//CSSs
+	//JSs
+	//JSONdoc
+
+	//Initialize variables
+	var arrCSSs = new Array();
+	var arrJSs = new Array();
+	var JSONdoc = new Array();
+	
+	//Populate CSS array
+	arrCSSs.push('http://code.jquery.com/ui/1.10.0/themes/ui-darkness/jquery-ui.css');
+	arrCSSs.push('../stylesheets/Chess.css');
+	
+	//Populate JS array
+	arrJSs.push('http://code.jquery.com/jquery-latest.min.js');
+	arrJSs.push('http://code.jquery.com/ui/1.10.0/jquery-ui.js');
+	arrJSs.push('../javascripts/chessBoard.js');
+	
+	//I do not know wheather to send an array or string
+	
+	
+	resRenderUserName(req,res,'boards',{title:'Game Test', CSSs : arrCSSs, JSs : arrJSs, JSONDoc:JSONdoc})
+}

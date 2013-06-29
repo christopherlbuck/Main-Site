@@ -6,10 +6,16 @@ var common = require('../common.js'),
 	resRenderUserName = common.resRenderUserName,
 	sendHTMLFile = common.sendHTMLFile,
 	sqlEscape = common.sqlEscape;
+	
+exports.dndIndex = function(req, res){
+	//Debug section
+	var d=false;
+	var pH='dndIndex-';
+}
 
 exports.dndNotes = function(req, res){
 	//Debug section
-	var d=true;
+	var d=false;
 	var pH='dndNotes-';
 
   //Get note list

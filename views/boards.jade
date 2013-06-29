@@ -1,0 +1,7 @@
+extends layout
+
+block content
+	- if(typeof(JSONDoc)!='undefined')
+		script(type= "text/javascript")
+			var initialDocument = #{JSONDoc};
+	div(id='board')

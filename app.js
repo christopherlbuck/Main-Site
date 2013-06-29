@@ -80,13 +80,15 @@ if ('development' == app.get('env')) {
 app.get('/', routes.index);
 app.get('/login',routes.login)
 
-//Get section requiring to be logged in
+	//Get section requiring to be logged in
+//DND
 app.get('/dnd/skill',ensureAuthenticated, routesDND.dndSkills);
 app.get('/dnd/notes',ensureAuthenticated, routesDND.dndNotes);
+//Games
 app.get('/game/chess', ensureAuthenticated , routesGame.gameChess);
 app.get('/game/create',ensureAuthenticated, routesGame.gameCreation);
-//app.get('/game/myGames',ensureAuthenticated, routesGame.myGames);
 app.get('/game/myGames',ensureAuthenticated, routesGame.myGamesMultiTable);
+app.get('/game/chess1', routesGame.gameChessTest);
 
 //Get every other page
 //Having issues with the catch all blocks public requests

@@ -2,7 +2,14 @@ doctype 5
 html
 	head
 		title= title
-		link(rel='stylesheet', href='/stylesheets/style.css')
+		- if(typeof(CSSs)=='undefined')
+			link(rel='stylesheet', href='/stylesheets/style.css')
+		else
+			each thisCSS in CSSs
+				link(rel='stylesheet', href='#{thisCSS}')
+		if(typeof(JSs)!='undefined')
+			each thisJS in JSs
+				script(type='text/javascript', src='#{thisJS}')
 	body
 		div
 			p(align='right')

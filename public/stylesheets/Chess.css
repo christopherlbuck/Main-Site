@@ -1,0 +1,93 @@
+/* Begin sprite styles */
+.blacktile, .whitetile {
+    background-image: url(../images/games/chess/blanks.png);
+    width: 69px;
+    height: 69px;
+}
+
+.trans {
+    background-image: url(../images/games/chess/trans.png);
+    width: 69px;
+    height: 69px;
+	background-position-x: 0px;
+}
+
+.whitetile {
+    background-position-x: 0px;
+}
+
+.blacktile {
+    background-position-x: -69px;
+}
+
+.rook.white{
+	background-image: url(../images/games/chess/RookW.png);
+    width: 69px;
+    height: 69px;
+}
+
+.rook.black{
+	background-image: url(../images/games/chess/RookB.png);
+    width: 69px;
+    height: 69px;
+}
+
+.knight.white{
+	background-image: url(../images/games/chess/KnightW.png);
+    width: 69px;
+    height: 69px;
+}
+
+.knight.black{
+	background-image: url(../images/games/chess/KnightB.png);
+    width: 69px;
+    height: 69px;
+}
+
+.bishop.white{
+	background-image: url(../images/games/chess/BishopW.png);
+    width: 69px;
+    height: 69px;
+}
+
+.bishop.black{
+	background-image: url(../images/games/chess/BishopB.png);
+    width: 69px;
+    height: 69px;
+}
+
+.queen.white{
+	background-image: url(../images/games/chess/QueenW.png);
+    width: 69px;
+    height: 69px;
+}
+
+.queen.black{
+	background-image: url(../images/games/chess/QueenB.png);
+    width: 69px;
+    height: 69px;
+}
+
+.king.white{
+	background-image: url(../images/games/chess/KingW.png);
+    width: 69px;
+    height: 69px;
+}
+
+.king.black{
+	background-image: url(../images/games/chess/KingB.png);
+    width: 69px;
+    height: 69px;
+}
+
+.pawn.black{
+	background-image: url(../images/games/chess/PawnB.png);
+    width: 69px;
+    height: 69px;
+}
+
+.pawn.white{
+	background-image: url(../images/games/chess/PawnW.png);
+    width: 69px;
+    height: 69px;
+}
