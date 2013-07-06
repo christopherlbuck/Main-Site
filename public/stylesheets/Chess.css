@@ -24,6 +24,7 @@
 	background-image: url(../images/games/chess/RookW.png);
     width: 69px;
     height: 69px;
+	
 }
 
 .rook.black{
@@ -90,4 +91,9 @@
 	background-image: url(../images/games/chess/PawnW.png);
     width: 69px;
     height: 69px;
+}
+.ui-draggable-disabled {
+	opacity: .60;
+	filter:Alpha(Opacity=70);
+	background-image: none;
 }

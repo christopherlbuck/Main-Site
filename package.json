@@ -10,7 +10,8 @@
     "jade": "*",
 	"mysql": "*",
 	"passport" : "*",
-	"passport-local" : "*"
+	"passport-local" : "*",
+	"json": "*"
   },
   "notes" : {
 	"0.0.1": "initial",

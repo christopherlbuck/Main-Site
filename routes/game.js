@@ -1,5 +1,6 @@
 var mysql = require('mysql');
 var url = require('url');
+//var JSON = require('json');
 var common = require('../common.js'),
     CL = common.CL,
 	sqlQuery = common.sqlQuery,
@@ -161,6 +162,10 @@ exports.gameChessTest = function(req, res){
 	var arrJSs = new Array();
 	var JSONdoc = new Array();
 	
+	var thisCallBack = function(){
+		resRenderUserName(req,res,'boards',{title:'Game Test', CSSs : arrCSSs, JSs : arrJSs, JSONDoc: JSON.stringify(JSONdoc)});
+	}
+	
 	//Populate CSS array
 	arrCSSs.push('http://code.jquery.com/ui/1.10.0/themes/ui-darkness/jquery-ui.css');
 	arrCSSs.push('../stylesheets/Chess.css');
@@ -170,8 +175,12 @@ exports.gameChessTest = function(req, res){
 	arrJSs.push('http://code.jquery.com/ui/1.10.0/jquery-ui.js');
 	arrJSs.push('../javascripts/chessBoard.js');
 	
-	//I do not know wheather to send an array or string
-	
-	
-	resRenderUserName(req,res,'boards',{title:'Game Test', CSSs : arrCSSs, JSs : arrJSs, JSONDoc:JSONdoc})
+	//Populate JSONdoc
+	var sql = 'select gameState, id, specialPieces, winner, player1ID, player2ID, moveNumber from chessgamestate where id='+url.parse(req.url, true).query.id;
+
+	sqlQuery('games',sql,true,function(fields,results){
+		JSONdoc=results[0];
+		thisCallBack()
+	});
+
 }
