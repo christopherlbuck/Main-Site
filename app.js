@@ -11,6 +11,7 @@ var express = require('express'),
 	posts = require('./posts'),
 	postsDND = require('./posts/dnd.js'),
 	postsGame = require('./posts/game.js'),
+	ajaxPostsGame = require('./posts/ajaxGame.js'),
     http = require('http'),
     path = require('path'),
     url = require('url'),
@@ -88,7 +89,7 @@ app.get('/dnd/notes',ensureAuthenticated, routesDND.dndNotes);
 app.get('/game/chess', ensureAuthenticated , routesGame.gameChess);
 app.get('/game/create',ensureAuthenticated, routesGame.gameCreation);
 app.get('/game/myGames',ensureAuthenticated, routesGame.myGamesMultiTable);
-app.get('/game/chess1', routesGame.gameChessTest);
+app.get('/game/chess1', ensureAuthenticated, routesGame.gameChessTest);
 
 //Get every other page
 //Having issues with the catch all blocks public requests
@@ -101,6 +102,8 @@ app.post('/dnd/notes',ensureAuthenticated, postsDND.dndNotes);
 app.post('/login', posts.login);
 app.post('/game/create',ensureAuthenticated, postsGame.gameCreate);
 
+
+app.post('/game/ajax/chess', ensureAuthenticated, ajaxPostsGame.submitMoveChess);
 
 //Web server
 http.createServer(app).listen(app.get('port'), function(){

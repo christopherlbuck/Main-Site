@@ -95,11 +95,18 @@ var Chess = (function ($) {
 	//Encrypt position
 	var ePosition = function(thisObject){ 
 		//debugger;
-		var sourceState = {
+		var sourceState =  {
             col: thisObject.data(dataKeys.col),
             row: thisObject.data(dataKeys.row)
         };
-		return String.fromCharCode(sourceState.row*cols+sourceState.col+61);
+		a=sourceState.row;
+		b=sourceState.col;
+		if(whitePawnsMove==-1){
+			a=cols - a - 1;
+			b=rows - b - 1;
+		}
+		debugger;
+		return String.fromCharCode(a*cols+b+61);
 	}
 	
 	//Decrypt position
@@ -109,7 +116,7 @@ var Chess = (function ($) {
 	}
 	
 	var deltaMovement = function(){
-		alert(specialPieces);
+		//alert(specialPieces);
 		var switched =false;
 		if(whitePawnsMove==-1){
 			switched=true;
@@ -148,6 +155,8 @@ var Chess = (function ($) {
 							specialPieces=setCharAt(specialPieces,5,"0");
 							break;
 					}
+					//if there is only one movement, record it in the lastMovePosition of specialPieces
+					specialPieces=setCharAt(specialPieces,23,thisMoveState[i]);
 				}
 				
 			}
@@ -156,12 +165,13 @@ var Chess = (function ($) {
 			//TODO watch out for that queen! The jump from a pawn another piece.
 			//Hasn't been written yet
 			alert('I am lazy');
+			if(switched);//TODO flipboard
 			return;
 		}
 		
 		if(switched);//TODO flipboard
 		
-		alert(specialPieces);
+		//alert(specialPieces);
 	};
 	
    var buildBackgroundBoard = function (boardElement) {
@@ -277,12 +287,55 @@ var Chess = (function ($) {
             .appendTo(boardElement);
     };
 	var submitThisMove = function(){
-		deltaMovement();
-	}
+		//deltaMovement();
+		//alert(originalState + '\n' + thisMoveState);
+		$.ajax({ 
+           url: '/game/ajax/chess',
+           type: 'POST',
+           cache: false, 
+           data: { id:initialDocument.id, chessGameState: thisMoveState, specialPieces: specialPieces, originalGameState: originalState }, 
+           success: function(data){
+              alert('Success!')
+           }
+           , error: function(jqXHR, textStatus, err){
+               alert('text status '+textStatus+', err '+err)
+           }
+        })
+	};
 	
 	var flipBoard = function(){
-		alert('Sucka, I have not written this yet!');
-	}
+		//alert('Sucka, I have not written this yet!');
+		//multiply board rotation value by -1
+		whitePawnsMove*=-1;
+		
+		for(var i=0; (i<cols/2) ; i++){
+			// alert(i);
+			// debugger;
+			for(var j=0; ((i+j)/2 <= ((rows + cols)/2)) && (j< rows); j++){
+				//alert('i:'+i+' j:'+j);
+				//find origin div
+				var currentPosition = {
+					col: i,
+					row: j,
+				};
+				
+				var originTile = $('div').filter(function () {
+					return filterFunctions.atPosition($(this), currentPosition);
+				});
+				
+				var currentPosition = {
+					col: (cols - i - 1),
+					row: (rows - j - 1),
+				};
+				
+				var destinationTile = $('div').filter(function () {
+					return filterFunctions.atPosition($(this), currentPosition);
+				});
+				//debugger;
+				movePieceToFrom(originTile,destinationTile);
+			}
+		}
+	};
 	
     var placePiecesOnBoard = function (strState) {
 		if(strState==''){
@@ -323,6 +376,10 @@ var Chess = (function ($) {
 						}
 					}
 			}
+		}
+		else{
+			alert('Admins we have problem');
+			//alert(
 		}
         var currentPiece;
         for (var i = 0; i < pieces.length; i++) {
@@ -497,12 +554,12 @@ var Chess = (function ($) {
 		var doublePawn=false;
 		
 		//from X & Y position
-		var fX=fromPiece.position().left/tileWidth
-		var fY=fromPiece.position().top/tileHeight
+		var fX=Math.floor(fromPiece.position().left/tileWidth);
+		var fY=Math.floor(fromPiece.position().top/tileHeight);
 		
 		//to X & Y position
-		var tX=toPiece.position().left/tileWidth
-		var tY=toPiece.position().top/tileHeight
+		var tX=Math.floor(toPiece.position().left/tileWidth);
+		var tY=Math.floor(toPiece.position().top/tileHeight);
 		
 		if(false){
 			alert('fX:'+fX + ' fY:' +fY);
@@ -518,14 +575,11 @@ var Chess = (function ($) {
 		//Pawn movement
 		if(fromPiece.hasClass(classes.pawn)){
 			var blackPiece = fromPiece.hasClass(classes.black) ? -1 : 1;
-			//if(fromPiece.hasClass(classes.black) || true){
 			//NNeESeSSwWnw value depends on board rotation. Default 5, south. Either-wise 1, north. 
 			var NNeESeSSwWnw = whitePawnsMove===1 ? 5 : 1;
 			if(blackPiece < 0) NNeESeSSwWnw = whitePawnsMove===1 ? 1 : 5;
-			//if(whitePawnsMove==1){NNeESeSSwWnw = 1;}
 		
 			//Allow the movement to be only one straight forward
-			//debugger;
 			if((fX==tX) && (tY==fY+(1*whitePawnsMove)*blackPiece) && !toPiece.hasClass(classes.white)) {moveOn= true;}
 			//Allow the movement to take pieces 1 forward & diagonal
 			else if(toPiece.hasClass(classes.op)){
@@ -539,35 +593,18 @@ var Chess = (function ($) {
 				moveOn= true;
 			}
 			else if(toPiece.hasClass(classes.trans) && specialPieces[22]=="1"){
-				if( (fX==tX+1) && (tY==fY+(1*whitePawnsMove)*blackPiece )) {moveOn= true;}
+				if( (fX==tX+1) && (tY==fY+(1*whitePawnsMove)*blackPiece )) {
+					if(false){
+						moveOn= true;
+					}
+				}
 				else if( (fX==tX-1) && (tY==fY+(1*whitePawnsMove)*blackPiece)) {moveOn= true;}
 				else{return false;}
 			}
+			debugger;
 			//TODO en passant (w/ else if)
 			//TODO get pawn to the other side (w/ else if)
 			
-			//Modify specialPieces to show movement
-			//}
-			// else{
-				// //NNeESeSSwWnw value depends on board rotation. Default 1, north. Either-wise 5, south. 
-				// var NNeESeSSwWnw = 1;
-				// if(whitePawnsMove==1){NNeESeSSwWnw = 5;}
-			
-				// if((fX==tX) && (tY==fY+whitePawnsMove) && !fromPiece.hasClass(classes.black)) {moveOn= true;}
-				// else if(toPiece.hasClass(classes.black)){
-					// if( (fX==tX+1) && (tY==fY+whitePawnsMove)) {moveOn= true;}
-					// else if( (fX==tX-1) && (tY==fY+whitePawnsMove) ) {moveOn= true;}
-				// }
-				// //First move two moves
-				// else if(between(fX,fY,tX,tY,NNeESeSSwWnw) && ((NNeESeSSwWnw==5 && fY==1) || (NNeESeSSwWnw==1 && fY==6)) && abs(tY - fY) == 2 ){
-					// doublePawn=true; 
-					// moveOn= true;
-				// }
-				// //TODO en passant (w/ else if)
-				// //TODO get pawn to the other side (w/ else if)
-				
-				// //Modify specialPieces to show movement
-			// }
 		}
 		else if(fromPiece.hasClass(classes.rook)){
 			//Move to a empty spot
@@ -658,12 +695,14 @@ var Chess = (function ($) {
 		}
 		
 		if(doublePawn && moveOn){
-			specialPieces[2]=1;
+			//specialPieces[22]=1;
+			specialPieces=setCharAt(specialPieces,22,"1");
 		}
 		else if(moveOn){
-			specialPieces[2]=0;
+			//specialPieces[22]=0;
+			specialPieces=setCharAt(specialPieces,22,"0");
 		}
-		
+		//debugger;
         return moveOn;
     };
 	var movePieceToFrom = function(fromPiece, toPiece){
@@ -681,30 +720,36 @@ var Chess = (function ($) {
 	
 		// DOM: move the piece from the original position to the new square
 		fromPiece.css({
-			left: destinationPosition.left,
-			top: destinationPosition.top
+			left: Math.floor(destinationPosition.left),
+			top: Math.floor(destinationPosition.top)
 		});
 
 		// DOM: move the blank from the original position to the old square
 		toPiece.css({
-			left: sourcePosition.left,
-			top: sourcePosition.top
+			left: Math.floor(sourcePosition.left),
+			top: Math.floor(sourcePosition.top)
 		});
 
 		// board state: set the blank's position to the source square
 		toPiece.data({
-			col: destinationState.col,
-			row: destinationState.row,
-			oldcol:sourceState.col,
-			oldrow: sourceState.row,
+			col: Math.floor(destinationState.col),
+			row: Math.floor(destinationState.row),
+			// oldcol:sourceState.col,
+			// oldrow: sourceState.row,
 		});
 
 		// board state: set the dragged piece's position to the destination square
 		fromPiece.data({
-			col: sourceState.col,
-			row: sourceState.row,
+			col: Math.floor(sourceState.col),
+			row: Math.floor(sourceState.row),
 		});
 	};
+	var escapeTheseCharacters = function(stringThis){
+		return stringThis.replace(/[\\\[\|\?]/g, function (match) {
+			return '\\' + match;
+		});
+	};
+	
     var dropHandler = function (event, ui) {
 		var draggedTo = $(this);
         var draggedPiece = ui.draggable;
@@ -724,8 +769,18 @@ var Chess = (function ($) {
 			//Modify thisMoveState to reflect only one piece changing
 			thisTransPosition=ePosition(draggedTo);
 			draggedPiecePosition= ePosition(draggedPiece);
+			debugger;
+			thisTransPosition=escapeTheseCharacters(thisTransPosition);
+			draggedPiecePosition= escapeTheseCharacters(draggedPiecePosition);
+			// thisTransPosition=escapeTheseCharacters(ePosition(draggedTo));
+			// draggedPiecePosition= escapeTheseCharacters(ePosition(draggedPiece));
+			// draggedPiecePosition= draggedPiecePosition === "|" ? "\\|"  : draggedPiecePosition;
+			// thisTransPosition= thisTransPosition === "|" ? "\\|"  : thisTransPosition;
+			// draggedPiecePosition= draggedPiecePosition === "\\" ? "\\\\"  : draggedPiecePosition;
+			// thisTransPosition= thisTransPosition === "\\" ? "\\\\"  : thisTransPosition;
 			//=== "|" ? "\\" + ePosition(draggedPiece) : ePosition(draggedPiece);
 			//alert(draggedPiecePosition);
+			debugger;
 			toReplace=new RegExp(draggedPiecePosition,"g");
 			//alert(thisMoveState);
 			//alert(draggedPiecePosition);
@@ -742,10 +797,15 @@ var Chess = (function ($) {
 			//Modify thisMoveState to reflect both pieces changing
 			
 			
+			// thisTakenPosition=ePosition(draggedTo);
+			// draggedPiecePosition=ePosition(draggedPiece);
 			thisTakenPosition=ePosition(draggedTo);
-			draggedPiecePosition=ePosition(draggedPiece);
-			draggedPiecePosition= draggedPiecePosition === "|" ? "\\" + draggedPiecePosition : draggedPiecePosition;
-			thisTakenPosition= thisTakenPosition === "|" ? "\\" + thisTakenPosition : thisTakenPosition;
+			draggedPiecePosition= ePosition(draggedPiece);
+			debugger;
+			thisTakenPosition=escapeTheseCharacters(thisTakenPosition);
+			draggedPiecePosition= escapeTheseCharacters(draggedPiecePosition);
+			// draggedPiecePosition= draggedPiecePosition === "|" ? "\\" + draggedPiecePosition : draggedPiecePosition;
+			// thisTakenPosition= thisTakenPosition === "|" ? "\\" + thisTakenPosition : thisTakenPosition;
 			
 			//Second replace
 			toReplace=new RegExp(thisTakenPosition,"g");
@@ -787,7 +847,8 @@ var Chess = (function ($) {
 		selectors.movablePieces = turn === classes.white ? selectors.white : selectors.black;
 		op = turn === classes.black ? classes.white : classes.black;
 		classes.op = turn === classes.black ? classes.white : classes.black;
-	}
+		if(turn==classes.white)flipBoard();
+	};
     // end private functions
 
     // begin public functions
@@ -797,6 +858,7 @@ var Chess = (function ($) {
 		
 		//Check for JSON document in page load or send AJAX request.
 		originalState=initialDocument.gameState;
+		//alert(originalState);
 		thisMoveState=originalState;
 		specialPieces=initialDocument.specialPieces;
 		
