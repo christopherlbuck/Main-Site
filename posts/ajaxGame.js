@@ -32,7 +32,7 @@ exports.submitMoveChess = function(req,res){
 		if( typeof(results[0]) != undefined || typeof(results[0]) != 'undefined'){
 			if(results[0].gameState == aS.originalGameState){
 				//No security
-				var q1_2 = "insert into chessgamehistory (chessGameID, moveNumber, gameState) values ("+aS.id+","+(results[0].moveNumber+1)+",\'"+aS.chessGameState+"\')";
+				var q1_2 = "insert into chessgamehistory (chessGameID, moveNumber, gameState, specialPieces) values ("+aS.id+","+(results[0].moveNumber+1)+",\'"+aS.chessGameState+"\',\'"+aS.specialPieces+"\')";
 				var q1_3 = "update chessgamestate set moveNumber="+(results[0].moveNumber+1)+', gameState = \''+sqlEscape(aS.chessGameState)+'\', specialPieces = \''+ aS.specialPieces +'\' where id='+sqlEscape(aS.id);
 				
 				CL(debugPC,pH+'q1_2:'+q1_2);

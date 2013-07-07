@@ -88,7 +88,6 @@ var Chess = (function ($) {
                 element.data(dataKeys.row) === position.row;
         }
     };
-	var queueThreat= new Array();
 	
     // end private variables
 
@@ -107,7 +106,7 @@ var Chess = (function ($) {
 			a=cols - a - 1;
 			b=rows - b - 1;
 		}
-		//debugger;
+		debugger;
 		return String.fromCharCode(a*cols+b+61);
 	}
 	
@@ -186,16 +185,16 @@ var Chess = (function ($) {
 				var thisItem={
 					classes: classes.blanks.black,
 					position: {
-						col: colNum * tileWidth,
-						row: rowNum * tileHeight
+						col: colNum * tileWidth+1,
+						row: rowNum * tileHeight+1
 					}
 				};
 				if((colNum+rowNum)%2==0){
 					thisItem={
 						classes: classes.blanks.white,
 						position: {
-							col: colNum * tileWidth,
-							row: rowNum * tileHeight
+							col: colNum * tileWidth+1,
+							row: rowNum * tileHeight+1
 						}
 					}
 				}
@@ -287,19 +286,6 @@ var Chess = (function ($) {
             })
             .click(flipBoard)
             .appendTo(boardElement);
-			
-		// ReCallMovement
-        $('<input>')
-            .attr('type', 'button')
-            .attr('value', 'reCallMovement')
-            .attr('id', 'reCallMovement	')
-            .css({
-                position: 'absolute',
-                left: cols * tileWidth,
-                top: 2 * tileHeight
-            })
-            .click(reDrawBoard)
-            .appendTo(boardElement);
     };
 	var submitThisMove = function(){
 		//deltaMovement();
@@ -311,7 +297,6 @@ var Chess = (function ($) {
            data: { id:initialDocument.id, chessGameState: thisMoveState, specialPieces: specialPieces, originalGameState: originalState }, 
            success: function(data){
               //alert('Success!')
-			  
            }
            , error: function(jqXHR, textStatus, err){
                alert('text status '+textStatus+', err '+err)
@@ -429,14 +414,12 @@ var Chess = (function ($) {
             // remove the previous players draggable
             $('.ui-draggable.' + classes.black).draggable('disable');
             $('.ui-draggable.' + classes.white).draggable('enable');
-			debugger;
         } 
 		else if(turn === classes.black){
             // remove the previous players draggable
             $('.ui-draggable.' + classes.white).draggable('disable');
             $('.ui-draggable.' + classes.black).draggable('enable');
         }
-		debugger;
     };
 	var setCharAt = function (str,index,chr) {
 		if(index > str.length-1) return str;
@@ -449,9 +432,9 @@ var Chess = (function ($) {
 		//NNeESeSSwWnw~12345678
 		
 		//differenceX
-		var dX=tX-fX;
+		dX=tX-fX;
 		//differenceY
-		var dY=tY-fY;
+		dY=tY-fY;
 		
 		//Initialize return
 		var returnValue = false;
@@ -534,9 +517,13 @@ var Chess = (function ($) {
 					var currentTile = $('div').filter(function () {
 						return filterFunctions.atPosition($(this), currentPosition);
 					});
-					
+					debugger;
 					if(!currentTile.hasClass(classes.trans)){returnValue = false;}
 					
+					//If checking for threatened spaces
+					if(checkForInThreat){
+						alert('Check this in between function');
+					}
 				}
 			}
 			//X
@@ -558,14 +545,6 @@ var Chess = (function ($) {
 					});
 					//debugger;
 					if(!currentTile.hasClass(classes.trans)){returnValue = false;}
-					
-					//debugger;
-					//If checking for threatened spaces
-					if(checkForInThreat){
-						//alert('Check this in between function');
-						queueThreat.push(currentPosition);
-						//debugger;
-					}
 				}
 			}
 			
@@ -661,12 +640,12 @@ var Chess = (function ($) {
 		}
 		else if(fromPiece.hasClass(classes.queen)){
 			//Move to a empty spot
-			//debugger;
+			debugger;
 			//alert(classes.black);
 			// alert(opPiece);
 			// alert(toPiece.hasClass(opPiece));
 			if(toPiece.hasClass(classes.trans) || toPiece.hasClass(opPiece) ){
-				//debugger;
+				debugger;
 				if(between(fX,fY,tX,tY,12345678)){moveOn= true;}
 			}
 		}
@@ -678,28 +657,25 @@ var Chess = (function ($) {
 			if(toPiece.hasClass(classes.trans)  || toPiece.hasClass(opPiece) ){
 				if(between(fX,fY,tX,tY,12345678)){
 					if(abs(fX-tX) < 2 && abs(fY-tY) < 2){moveOn=true;}
-					else if(abs(fY-tY)==0 && ((fromPiece.hasClass(classes.white) && specialPieces.charAt(0)=="1") || (fromPiece.hasClass(classes.black) && specialPieces.charAt(1)=="1" && !amIInCheck) )){
+					else if(dY==0 && ((fromPiece.hasClass(classes.white) && specialPieces.charAt(0)=="1") || (fromPiece.hasClass(classes.black) && specialPieces.charAt(1)=="1" && !amIInCheck) )){
 						//Done in a nested if fashion for readability
 						//KK(K'sR)(Q'sR)(K'sR)(Q'sR)PPPPPPPPPPPPPPPP(boolean)(lastMovedPieceLocation)
-						//debugger;
-						if(fromPiece.hasClass(turn)){queueThreat= new Array();}
-						
+						debugger;
 						if(!between(fX,fY,tX,tY,12345678,true)){
 							return false;
 						}
 						//alert(ePosition(toPiece));
 						//king's side castle //Bvu W>=
-						if( (ePosition(toPiece) == 'v' && specialPieces[4]=='1') || (ePosition(toPiece)=='>' && specialPieces[2]=='1' ) ){//&& !amIInCheck
+						if( (ePosition(toPiece) == 'v' && specialPieces[4]=='1') || (ePosition(toPiece)=='>' && specialPieces[2]=='1')){
 							//alert('King side castling');
+
 							moveOn=2;
-							//debugger;
 						}
 						
 						//Queen's side castle //B{| WCD
 						if( (ePosition(toPiece) == '{' && specialPieces[4]=='1') || (ePosition(toPiece)=='C' && specialPieces[2]=='1')){
 							//alert('Queen side castling');
 							moveOn=2;
-							//debugger;
 						}
 					}
 				}
@@ -717,21 +693,6 @@ var Chess = (function ($) {
 			}
 		}
 		
-		if(queueThreat.length!=0 && fromPiece.hasClass(turn)){
-			//alert('You need to check these '+queueThreat.length);
-			for(var thisPosition in queueThreat){
-				checkIfInCheck(thisPosition);
-				//amIInCheck=amIInCheck;
-				if(amIInCheck){
-					alert('Illegal castle movement.');
-					queueThreat.length=new Array();
-					amIInCheck=false;
-					return amIInCheck; //because I am no longer in check
-				}
-				debugger;
-			}
-		}
-		//debugger;
 		if(doublePawn && moveOn){
 			//specialPieces[22]=1;
 			specialPieces=setCharAt(specialPieces,22,"1");
@@ -792,7 +753,6 @@ var Chess = (function ($) {
 	};
 	
     var dropHandler = function (event, ui) {
-		amIInCheck = false;
 		var draggedTo = $(this);
         var draggedPiece = ui.draggable;
 		var howManyToMove=0;
@@ -812,7 +772,7 @@ var Chess = (function ($) {
 			//Modify thisMoveState to reflect only one piece changing
 			thisTransPosition=ePosition(draggedTo);
 			draggedPiecePosition= ePosition(draggedPiece);
-			//debugger;
+			debugger;
 			thisTransPosition=escapeTheseCharacters(thisTransPosition);
 			draggedPiecePosition= escapeTheseCharacters(draggedPiecePosition);
 			// thisTransPosition=escapeTheseCharacters(ePosition(draggedTo));
@@ -823,7 +783,7 @@ var Chess = (function ($) {
 			// thisTransPosition= thisTransPosition === "\\" ? "\\\\"  : thisTransPosition;
 			//=== "|" ? "\\" + ePosition(draggedPiece) : ePosition(draggedPiece);
 			//alert(draggedPiecePosition);
-			//debugger;
+			debugger;
 			toReplace=new RegExp(draggedPiecePosition,"g");
 			//alert(thisMoveState);
 			//alert(draggedPiecePosition);
@@ -837,7 +797,6 @@ var Chess = (function ($) {
 			
 			if(howManyToMove==2){
 				alert('Need to move the rook');
-				
 			}
 		}
 		//Player has taken a piece
@@ -878,23 +837,13 @@ var Chess = (function ($) {
 		
 		//alert(originalState + '\n' + thisMoveState);
 		//Check to see if my move has put me in check
-		
-		if(!amIInCheck)checkIfInCheck();
+		amIInCheck = false;
+		checkIfInCheck();
 		if(amIInCheck){
-			alert('You put yourself in check');
-			reDrawBoard();
+			alert('write redraw');
 		}
-		//debugger;
+		debugger;
     };
-	
-	var reDrawBoard = function(){
-		if(thisMoveState!=originalState){
-			$('#board').empty();
-			draggableInitialized=false;
-			debugger;
-			Chess.initialize($('#board'));
-		}
-	}
 
     var initDroppable = function () {
 		//debugger;
@@ -915,28 +864,14 @@ var Chess = (function ($) {
 		if(turn==classes.white)flipBoard();
 	};
 	
-	var checkIfInCheck = function(thisObject){
+	var checkIfInCheck = function(){
 		var myKing=$(selectors.getMyKing());
-		if(thisObject!=undefined){
-			// myKing=thisObject;
-			// var currentPosition = {
-				// col: cX,
-				// row: cY,
-			// };
-			var currentPosition = queueThreat[thisObject];
-						
-			var myKing = $('div').filter(function () {
-				return filterFunctions.atPosition($(this), currentPosition);
-			});
-			debugger;
-		}
 		
 		$(selectors.getOpPieces()).each(function(index){
 			//debugger;
 			if(validMove($(this),myKing) && !amIInCheck){
-				
+				alert('You are in check');
 				amIInCheck= true;
-				debugger;
 			}
 			
 			//alert(index);
@@ -965,9 +900,8 @@ var Chess = (function ($) {
         switchTurns();
 		
 		//After the turn is decided, see if you're in check.
-		amIInCheck=false;
 		checkIfInCheck();
-		if(amIInCheck){alert('You are in check');}
+		//if(amIInCheck){}
 		
 		//Initialize moveable pieces
 		initDraggable();
