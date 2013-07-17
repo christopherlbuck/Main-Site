@@ -23,6 +23,7 @@ var Chess = (function ($) {
 	var gameState;
     var turn;
 	var op;
+	var doublePawn=false;
     var board = [];
     var boardBG = [];
     var rows = 8;
@@ -114,14 +115,16 @@ var Chess = (function ($) {
 			switched=true;
 			//TODO flipboard
 		}
-		
-		
-		if(thisMoveState.length==32 || true){
+		var a=thisMoveState.length;
+		debugger;
+		if(thisMoveState.length==32 || thisMoveState.length==96){
 			thisMoveStateTemp = thisMoveState.replace(/[\\]/g, function (match) {
 				return '';
 			});
-			for(var i=0; i<thisMoveState.length; i++){
-				if(thisMoveStateTemp[i]!=originalState[i] && thisMoveStateTemp[i]!="<"){
+			var b=originalState.length;
+			debugger;
+			for(var i=0; i<originalState.length; i++){
+				if(thisMoveState[i]!=originalState[i] && thisMoveStateTemp[i]!="<"){
 				//alert(i);
 					debugger;
 					switch(i){
@@ -156,6 +159,7 @@ var Chess = (function ($) {
 						case 28: case 29: case 30: case 31: 
 					}
 					//if there is only one movement, record it in the lastMovePosition of specialPieces
+					debugMoveState=thisMoveStateTemp[i];
 					specialPieces=setCharAt(specialPieces,23,thisMoveState[i]);
 					debugger;
 				}
@@ -175,7 +179,7 @@ var Chess = (function ($) {
 		//alert(specialPieces);
 	};
 	
-   var buildBackgroundBoard = function (boardElement) {
+    var buildBackgroundBoard = function (boardElement) {
         for (var colNum = 0; colNum < cols; colNum++) {
             boardBG[colNum] = [];
         }
@@ -614,7 +618,8 @@ var Chess = (function ($) {
 		//Op
 		var opPiece = fromPiece.hasClass(classes.black) ? classes.white : classes.black;
 		
-		var doublePawn=false;
+		
+		debugger;
 		
 		//from X & Y position
 		//debugger;
@@ -659,20 +664,37 @@ var Chess = (function ($) {
 			//First move two moves
 			else if(between(fX,fY,tX,tY,NNeESeSSwWnw) && ((NNeESeSSwWnw==5 && fY==1) || (NNeESeSSwWnw==1 && fY==6)) && abs(tY - fY) == 2 ){
 				doublePawn=true; 
+				debugger;
 				moveOn= true;
 			}
+			//En passant
 			else if(toPiece.hasClass(classes.trans) && specialPieces[22]=="1"){
-				if( (fX==tX+1) && (tY==fY+(1*whitePawnsMove)*blackPiece )) {
-					if(false){
+				debugger;
+				if( ( (fX==tX+1) || (fX==tX-1) ) && (tY==fY+(1*whitePawnsMove)*blackPiece )) {
+					decryptedLastMove=specialPieces.charCodeAt(23);
+					var a = eVPosition(decryptedLastMove+cols, rows, cols, whitePawnsMove);
+					var c = eVPosition(decryptedLastMove-cols, rows, cols, whitePawnsMove);
+					var b = ePosition(toPiece, rows , cols, whitePawnsMove);
+					
+					debugger;
+					if(eVPosition(decryptedLastMove+rows, rows, cols, whitePawnsMove)== ePosition(toPiece, rows , cols, whitePawnsMove) || eVPosition(decryptedLastMove-rows, rows, cols, whitePawnsMove)== ePosition(toPiece, rows , cols, whitePawnsMove) ){
+						//Remove the pawn that was En passant-ed
+						var currentPosition = {
+							col: Math.floor(decryptedLastMove/cols),
+							row: decryptedLastMove%cols,
+						};
+						var enPassantedPiece = $('div').filter(function () {
+							return filterFunctions.atPosition($(this), currentPosition);
+						});
+						debugger;
+						enPassantedPiece._removeClass();
+						enPassantedPiece._addClass(classes.trans);
 						moveOn= true;
 					}
 				}
 				else if( (fX==tX-1) && (tY==fY+(1*whitePawnsMove)*blackPiece)) {moveOn= true;}
 				else{return false;}
 			}
-			//debugger;
-			//TODO en passant (w/ else if)
-			//TODO get pawn to the other side (w/ else if)
 			
 		}
 		else if(fromPiece.hasClass(classes.rook)){
@@ -768,17 +790,10 @@ var Chess = (function ($) {
 			}
 		}
 		//debugger;
-		if(doublePawn && moveOn){
-			//specialPieces[22]=1;
-			specialPieces=setCharAt(specialPieces,22,"1");
-		}
-		else if(moveOn){
-			//specialPieces[22]=0;
-			specialPieces=setCharAt(specialPieces,22,"0");
-		}
+
 		
 		
-		//debugger;
+		debugger;
 		//alert(ePosition(fromPiece));
         return moveOn;
     };
@@ -828,6 +843,7 @@ var Chess = (function ($) {
 	};
 	
     var dropHandler = function (event, ui) {
+		doublePawn=false;
 		amIInCheck = false;
 		var draggedTo = $(this);
         var draggedPiece = ui.draggable;
@@ -857,7 +873,7 @@ var Chess = (function ($) {
 				return thisTransPosition;
 			});
 			
-			debugger;
+			//debugger;
 			movePieceToFrom(draggedPiece,draggedTo);
 			
 			if(howManyToMove==2){
@@ -930,8 +946,6 @@ var Chess = (function ($) {
 				return thisTakenPosition;
 			});
 			
-			
-			
 			movePieceToFrom(draggedPiece,draggedTo);
 			
 			//TODO create logic to be able to take back a move prior to submitting a move
@@ -998,7 +1012,17 @@ var Chess = (function ($) {
 			alert('You put yourself in check');
 			reDrawBoard();
 		}
-		//debugger;
+		if(doublePawn){
+			//specialPieces[22]=1;
+			specialPieces=setCharAt(specialPieces,22,"1");
+			deltaMovement();
+		}
+		else{
+			//specialPieces[22]=0;
+			specialPieces=setCharAt(specialPieces,22,"0");
+			deltaMovement();
+		}
+		debugger;
     };
 	
 	var dialogRedraw = function(myDialog, draggedPiece){
