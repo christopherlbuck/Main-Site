@@ -92,7 +92,7 @@
     width: 69px;
     height: 69px;
 }
-.ui-draggable-disabled {
+.ui-draggable-disabled{
 	opacity: .60;
 	filter:Alpha(Opacity=70);
 	background-image: none;

@@ -174,6 +174,7 @@ exports.gameChessTest = function(req, res){
 	arrJSs.push('http://code.jquery.com/jquery-latest.min.js');
 	arrJSs.push('http://code.jquery.com/ui/1.10.0/jquery-ui.js');
 	arrJSs.push('../javascripts/chessBoard.js');
+	arrJSs.push('../javascripts/allBoards.js');
 	
 	//Populate JSONdoc
 	var sql = 'select gameState, id, specialPieces, winner, player1ID, player2ID, moveNumber from chessgamestate where id='+url.parse(req.url, true).query.id;

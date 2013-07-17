@@ -50,6 +50,9 @@ var Chess = (function ($) {
 		getMyKing: function () {
 			return '.king.' + turn;
 		},
+		getMyRooks: function () {
+			return '.rook.' + turn;
+		},
 		getAllPieces: function () {
 			return '.pawn.' + classes.white + ', .rook.' + classes.white + ', .knight.' + classes.white + ', .bishop.' + classes.white+ ', .queen.' + classes.white+ ', .king.' + classes.white + ',.pawn.' + classes.black + ', .rook.' + classes.black + ', .knight.' + classes.black + ', .bishop.' + classes.black+ ', .queen.' + classes.black+ ', .king.' + classes.black;
 		}
@@ -63,8 +66,8 @@ var Chess = (function ($) {
         white: 'white',
         black: 'black',
         pawn: 'pawn',
-		rook : 'rook',
-		bishop :'bishop',
+		rook: 'rook',
+		bishop:'bishop',
 		knight:'knight',
 		queen:'queen',
 		king:'king'
@@ -88,6 +91,7 @@ var Chess = (function ($) {
                 element.data(dataKeys.row) === position.row;
         }
     };
+	
 	var queueThreat= new Array();
 	
     // end private variables
@@ -95,21 +99,7 @@ var Chess = (function ($) {
     // begin private functions
 	
 	//Encrypt position
-	var ePosition = function(thisObject){ 
-		//debugger;
-		var sourceState =  {
-            col: thisObject.data(dataKeys.col),
-            row: thisObject.data(dataKeys.row)
-        };
-		a=sourceState.row;
-		b=sourceState.col;
-		if(whitePawnsMove==-1){
-			a=cols - a - 1;
-			b=rows - b - 1;
-		}
-		//debugger;
-		return String.fromCharCode(a*cols+b+61);
-	}
+	// Moved to allBoards
 	
 	//Decrypt position
 	var dPosition = function(location){ 
@@ -127,9 +117,13 @@ var Chess = (function ($) {
 		
 		
 		if(thisMoveState.length==32 || true){
+			thisMoveStateTemp = thisMoveState.replace(/[\\]/g, function (match) {
+				return '';
+			});
 			for(var i=0; i<thisMoveState.length; i++){
-				if(thisMoveState[i]!=originalState[i] && thisMoveState[i]!="<"){
+				if(thisMoveStateTemp[i]!=originalState[i] && thisMoveStateTemp[i]!="<"){
 				//alert(i);
+					debugger;
 					switch(i){
 						//KK(K'sR)(Q'sR)(K'sR)(Q'sR)(boolean)(lastMovedPieceLocation)
 						//White King
@@ -156,9 +150,14 @@ var Chess = (function ($) {
 						case 22:
 							specialPieces=setCharAt(specialPieces,5,"0");
 							break;
+						case 08: case 09: case 10: case 11: 
+						case 12: case 13: case 14: case 15: 
+						case 24: case 25: case 26: case 27: 
+						case 28: case 29: case 30: case 31: 
 					}
 					//if there is only one movement, record it in the lastMovePosition of specialPieces
 					specialPieces=setCharAt(specialPieces,23,thisMoveState[i]);
+					debugger;
 				}
 				
 			}
@@ -300,10 +299,31 @@ var Chess = (function ($) {
             })
             .click(reDrawBoard)
             .appendTo(boardElement);
+		// Debug me
+        $('<input>')
+            .attr('type', 'button')
+            .attr('value', 'debugItYourself')
+            .attr('id', 'debugItYourself	')
+            .css({
+                position: 'absolute',
+                left: cols * tileWidth,
+                top: 3 * tileHeight
+            })
+            .click(debugItYourself)
+            .appendTo(boardElement);
     };
+	var debugItYourself = function(){
+		alert("originalState:\n"+originalState+"\n thisMoveState\n"+thisMoveState);
+		alert("You are in check\n"+amIInCheck);
+		alert("specialPieces\n"+specialPieces);
+		alert("thisMoveState length:\n"+thisMoveState.length);
+		//alert(originalState);
+	}
 	var submitThisMove = function(){
-		//deltaMovement();
+		deltaMovement();
 		//alert(originalState + '\n' + thisMoveState);
+		
+		
 		$.ajax({ 
            url: '/game/ajax/chess',
            type: 'POST',
@@ -321,6 +341,7 @@ var Chess = (function ($) {
 	
 	var flipBoard = function(){
 		//alert('Sucka, I have not written this yet!');
+		debugger;
 		//multiply board rotation value by -1
 		whitePawnsMove*=-1;
 		
@@ -357,32 +378,44 @@ var Chess = (function ($) {
 		if(strState==''){
 			 var pieces = [];
 		}
-		else if(strState.length == 32){
+		else if(strState.length == 32 || strState.length == 96){
 			var pieces = [];
-			for(var i=0; i < 32; i++){
+			for(var i=0; i < strState.length; i++){
 				var positionOfCurrentPiece = strState.charCodeAt(i) - 60 - 1 ;
 				var team = classes.white;
-				if(i>15)team = classes.black;
+				if(i>15 && i<32 || i> 63)team = classes.black;
 					if(positionOfCurrentPiece != -1 ){
-						switch(i%16){
+						var switchValue=i%16;
+						if(i>31){
+							switchValue=((i-32)%32)+32;
+						}
+						switch(switchValue){
 							//White King
 							case 0: 
 								pieces.push({classes: [classes.king, team].join(' '), col:positionOfCurrentPiece%cols ,row: Math.floor(positionOfCurrentPiece/cols) });
 								break;
 							//White Queen
-							case 1:
+							case 1: 
+							case 32: case 33: case 34: case 35:
+							case 36: case 37: case 38: case 39:
 								pieces.push({classes: [classes.queen, team].join(' '), col:positionOfCurrentPiece%cols ,row: Math.floor(positionOfCurrentPiece/cols) });
 								break;
 							//White Bishop One - Two
 							case 2:case 3:
+							case 40: case 41: case 42: case 43:
+							case 44: case 45: case 46: case 47:
 								pieces.push({classes: [classes.bishop, team].join(' '), col:positionOfCurrentPiece%cols ,row: Math.floor(positionOfCurrentPiece/cols) });
 								break;
 							//White Knight One - Two
 							case 4:case 5:
+							case 48: case 49: case 50: case 51:
+							case 52: case 53: case 54: case 55:
 								pieces.push({classes: [classes.knight, team].join(' '), col:positionOfCurrentPiece%cols ,row: Math.floor(positionOfCurrentPiece/cols) });
 								break;
 							//White King's rook + White Queen's rook
 							case 6:case 7:
+							case 56: case 57: case 58: case 59:
+							case 60: case 61: case 62: case 63:
 								pieces.push({classes: [classes.rook, team].join(' '), col:positionOfCurrentPiece%cols ,row: Math.floor(positionOfCurrentPiece/cols) });
 								break;
 							//White Pawns
@@ -394,7 +427,7 @@ var Chess = (function ($) {
 			}
 		}
 		else{
-			alert('Admins we have problem');
+			alert('Admins we have problem. The length of strState:'+strState.length+'.\nThe strState is:'+strState);
 			//alert(
 		}
         var currentPiece;
@@ -677,26 +710,29 @@ var Chess = (function ($) {
 			//Move to a empty spot or take a piece
 			if(toPiece.hasClass(classes.trans)  || toPiece.hasClass(opPiece) ){
 				if(between(fX,fY,tX,tY,12345678)){
+					var a=abs(fY-tY);
+					var b= (fromPiece.hasClass(classes.white) && specialPieces.charAt(0)=="1") || (fromPiece.hasClass(classes.black) && specialPieces.charAt(1)=="1");
+					var c=!amIInCheck;
 					if(abs(fX-tX) < 2 && abs(fY-tY) < 2){moveOn=true;}
-					else if(abs(fY-tY)==0 && ((fromPiece.hasClass(classes.white) && specialPieces.charAt(0)=="1") || (fromPiece.hasClass(classes.black) && specialPieces.charAt(1)=="1" && !amIInCheck) )){
+					else if(abs(fY-tY)==0 && ((fromPiece.hasClass(classes.white) && specialPieces.charAt(0)=="1") || (fromPiece.hasClass(classes.black) && specialPieces.charAt(1)=="1")) && !amIInCheck ){
 						//Done in a nested if fashion for readability
 						//KK(K'sR)(Q'sR)(K'sR)(Q'sR)PPPPPPPPPPPPPPPP(boolean)(lastMovedPieceLocation)
-						//debugger;
 						if(fromPiece.hasClass(turn)){queueThreat= new Array();}
 						
 						if(!between(fX,fY,tX,tY,12345678,true)){
 							return false;
 						}
 						//alert(ePosition(toPiece));
+						var d= ePosition(toPiece, cols, whitePawnsMove);
 						//king's side castle //Bvu W>=
-						if( (ePosition(toPiece) == 'v' && specialPieces[4]=='1') || (ePosition(toPiece)=='>' && specialPieces[2]=='1' ) ){//&& !amIInCheck
+						if( ((ePosition(toPiece, rows, cols, whitePawnsMove) == 'v' && specialPieces[4]=='1') || (ePosition(toPiece, rows, cols, whitePawnsMove)=='>' && specialPieces[2]=='1' )) && !amIInCheck){//&& !amIInCheck
 							//alert('King side castling');
 							moveOn=2;
 							//debugger;
 						}
 						
 						//Queen's side castle //B{| WCD
-						if( (ePosition(toPiece) == '{' && specialPieces[4]=='1') || (ePosition(toPiece)=='C' && specialPieces[2]=='1')){
+						if( ((ePosition(toPiece, rows, cols, whitePawnsMove) == '{' && specialPieces[4]=='1') || (ePosition(toPiece, rows, cols, whitePawnsMove)=='C' && specialPieces[2]=='1')) && !amIInCheck){
 							//alert('Queen side castling');
 							moveOn=2;
 							//debugger;
@@ -728,7 +764,7 @@ var Chess = (function ($) {
 					amIInCheck=false;
 					return amIInCheck; //because I am no longer in check
 				}
-				debugger;
+				//debugger;
 			}
 		}
 		//debugger;
@@ -786,7 +822,7 @@ var Chess = (function ($) {
 		});
 	};
 	var escapeTheseCharacters = function(stringThis){
-		return stringThis.replace(/[\\\[\|\?]/g, function (match) {
+		return stringThis.replace(/[\\\[\|\?\^]/g, function (match) {
 			return '\\' + match;
 		});
 	};
@@ -807,53 +843,80 @@ var Chess = (function ($) {
 		
 		//if blank square
 		if(draggedTo.hasClass(classes.trans)){
-			//debugger;
+			
 			
 			//Modify thisMoveState to reflect only one piece changing
-			thisTransPosition=ePosition(draggedTo);
-			draggedPiecePosition= ePosition(draggedPiece);
+			thisTransPosition=ePosition(draggedTo, rows, cols, whitePawnsMove);
+			draggedPiecePosition= ePosition(draggedPiece, rows, cols, whitePawnsMove);
+			//draggedPiecePosition= escapeTheseCharacters(draggedPiecePosition);
 			//debugger;
 			thisTransPosition=escapeTheseCharacters(thisTransPosition);
 			draggedPiecePosition= escapeTheseCharacters(draggedPiecePosition);
-			// thisTransPosition=escapeTheseCharacters(ePosition(draggedTo));
-			// draggedPiecePosition= escapeTheseCharacters(ePosition(draggedPiece));
-			// draggedPiecePosition= draggedPiecePosition === "|" ? "\\|"  : draggedPiecePosition;
-			// thisTransPosition= thisTransPosition === "|" ? "\\|"  : thisTransPosition;
-			// draggedPiecePosition= draggedPiecePosition === "\\" ? "\\\\"  : draggedPiecePosition;
-			// thisTransPosition= thisTransPosition === "\\" ? "\\\\"  : thisTransPosition;
-			//=== "|" ? "\\" + ePosition(draggedPiece) : ePosition(draggedPiece);
-			//alert(draggedPiecePosition);
-			//debugger;
 			toReplace=new RegExp(draggedPiecePosition,"g");
-			//alert(thisMoveState);
-			//alert(draggedPiecePosition);
 			thisMoveState=thisMoveState.replace(toReplace, function (match) {
 				return thisTransPosition;
 			});
-			//alert(thisMoveState);
 			
-			
+			debugger;
 			movePieceToFrom(draggedPiece,draggedTo);
 			
 			if(howManyToMove==2){
-				alert('Need to move the rook');
+				//alert('Need to move the rook');
+				deltaMovement();
+				lastMovement = specialPieces[23];
+				//debugger;
 				
+				//Find my rooks
+				$(selectors.getMyRooks()).each(function(){
+					var sourceState = {
+						col: $(this).data(dataKeys.col),
+						row: $(this).data(dataKeys.row)
+					};
+					var originTile = $('div').filter(function () {
+						return filterFunctions.atPosition($(this), sourceState);
+					});
+					var innerState = {
+						col: draggedPiece.data(dataKeys.col),
+						row: draggedPiece.data(dataKeys.row)
+					};
+					var destinationState = {
+						col: innerState.col+(innerState.col-sourceState.col),
+						row: innerState.row+(innerState.row-sourceState.row)
+					};
+					var destinationTile = $('div').filter(function () {
+						return filterFunctions.atPosition($(this), destinationState);
+					});
+					
+					if(abs(innerState.col-sourceState.col)==1){
+						debugger;
+						movePieceToFrom(originTile,destinationTile);
+					
+						//Modify thisMoveState to reflect the rook movement
+						thisTransPosition=ePosition(originTile, rows, cols, whitePawnsMove);
+						draggedPiecePosition= ePosition(destinationTile, rows, cols, whitePawnsMove);
+						//debugger;
+						thisTransPosition=escapeTheseCharacters(thisTransPosition);
+						draggedPiecePosition= escapeTheseCharacters(draggedPiecePosition);
+						toReplace=new RegExp(draggedPiecePosition,"g");
+						thisMoveState=thisMoveState.replace(toReplace, function (match) {
+							return thisTransPosition;
+						});
+					}
+					//debugger;
+					
+				});
+				
+				//movePieceToFrom
 			}
 		}
 		//Player has taken a piece
 		else{
 			//Modify thisMoveState to reflect both pieces changing
-			
-			
-			// thisTakenPosition=ePosition(draggedTo);
-			// draggedPiecePosition=ePosition(draggedPiece);
-			thisTakenPosition=ePosition(draggedTo);
-			draggedPiecePosition= ePosition(draggedPiece);
+			thisTakenPosition=ePosition(draggedTo, rows, cols, whitePawnsMove);
+			draggedPiecePosition= ePosition(draggedPiece, rows, cols, whitePawnsMove);
 			debugger;
 			thisTakenPosition=escapeTheseCharacters(thisTakenPosition);
 			draggedPiecePosition= escapeTheseCharacters(draggedPiecePosition);
-			// draggedPiecePosition= draggedPiecePosition === "|" ? "\\" + draggedPiecePosition : draggedPiecePosition;
-			// thisTakenPosition= thisTakenPosition === "|" ? "\\" + thisTakenPosition : thisTakenPosition;
 			
 			//Second replace
 			toReplace=new RegExp(thisTakenPosition,"g");
@@ -875,6 +938,57 @@ var Chess = (function ($) {
 			draggedTo._removeClass();
 			draggedTo._addClass(classes.trans);
 		}
+		//Pawn Promotion
+		tY=Math.floor(draggedPiece.position().top/tileHeight);
+		if(draggedPiece.hasClass(classes.pawn) && (tY==0 || tY==7) ){
+			debugger;
+			$('<div>')
+				.attr('value', 'popUp')
+				.attr('id', 'dialog')
+				.attr('title', 'What piece would you like')
+				.css({
+					position: 'absolute',
+					left: 0,
+					top: 0
+				})
+				.appendTo($('div#board'));
+			$("#dialog").dialog({
+				
+				autoOpen: true,
+				buttons: {
+					Queen: function() { 
+						alert("Queen!"); 
+						$(this).dialog("close"); 
+						dialogRedraw(classes.queen,draggedPiece);
+					},
+					Rook: function() { 
+						alert("Rook!"); 
+						$(this).dialog("close");
+						dialogRedraw(classes.rook,draggedPiece);
+					},
+					Bishop: function() { 
+						alert("Bishop!"); 
+						$(this).dialog("close"); 
+						dialogRedraw(classes.bishop,draggedPiece);
+					},
+					Knight: function() { 
+						alert("Knight!"); 
+						$(this).dialog("close"); 
+						dialogRedraw(classes.knight,draggedPiece);
+					},
+					Cancel: function() { 
+						$(this).dialog("close"); 
+						reDrawBoard();
+					}
+				
+				},
+				modal: true,
+				//close: dialogRedraw('',draggedPiece),
+				width: "600px"
+				
+			});
+			deltaMovement();
+		}
 		
 		//alert(originalState + '\n' + thisMoveState);
 		//Check to see if my move has put me in check
@@ -887,10 +1001,61 @@ var Chess = (function ($) {
 		//debugger;
     };
 	
+	var dialogRedraw = function(myDialog, draggedPiece){
+		if(myDialog=='' && draggedPiece.hasClass(classes.pawn)){reDrawBoard();}
+		else{
+			//0 White Queens
+			//1 White Bishops
+			//2 White Knights
+			//3 White Rooks
+			//4 Black Queens
+			//5 Black Bishops
+			//6 Black Knights
+			//7 Black Rooks
+			if(thisMoveState.length == 32){
+				for(var i=0; i<8;i++){
+					thisMoveState+='<<<<<<<<';
+				}
+			}
+			debugger;
+			var switchValue = 0;//White queen
+			if(myDialog==classes.rook){switchValue = 3;}
+			else if(myDialog==classes.bishop){switchValue = 1;}
+			else if(myDialog==classes.knight){switchValue = 2;}
+			if(turn==classes.black){switchValue +=4;}
+			
+			draggedPiecePosition= ePosition(draggedPiece, rows, cols, whitePawnsMove);
+			draggedPiecePosition= escapeTheseCharacters(draggedPiecePosition);
+			toReplace=new RegExp(draggedPiecePosition,"g");
+			thisMoveState=thisMoveState.replace(toReplace, function (match) {
+				return String.fromCharCode(60);
+			});
+			
+			var switched=true;
+			for(var i=switchValue*8; i<8*switchValue+8 && switched; i++){
+				if(thisMoveState[32+i]=='<'){
+					draggedPiecePosition=ePosition(draggedPiece, rows, cols, whitePawnsMove);
+					thisMoveState=setCharAt(thisMoveState,32+i,draggedPiecePosition);
+					debugger;
+					//alert(draggedPiecePosition);
+					switched=false;
+				}
+			}
+			
+			
+			debugger;
+			draggedPiece._removeClass();
+			draggedPiece._addClass(myDialog);
+			draggedPiece._addClass(turn);
+		}
+	}
+	
 	var reDrawBoard = function(){
 		if(thisMoveState!=originalState){
 			$('#board').empty();
 			draggableInitialized=false;
+			amIInCheck=false;
+			singleMoveLockOut=false;
 			debugger;
 			Chess.initialize($('#board'));
 		}
@@ -928,7 +1093,7 @@ var Chess = (function ($) {
 			var myKing = $('div').filter(function () {
 				return filterFunctions.atPosition($(this), currentPosition);
 			});
-			debugger;
+			//debugger;
 		}
 		
 		$(selectors.getOpPieces()).each(function(index){
@@ -936,7 +1101,7 @@ var Chess = (function ($) {
 			if(validMove($(this),myKing) && !amIInCheck){
 				
 				amIInCheck= true;
-				debugger;
+				//debugger;
 			}
 			
 			//alert(index);
@@ -948,6 +1113,8 @@ var Chess = (function ($) {
 
     // begin public functions
     var initialize = function (boardElement) {
+		
+	
 		//Draw background board
 		buildBackgroundBoard(boardElement)
 		

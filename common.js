@@ -11,12 +11,23 @@ var mysql = require('mysql'),
 	dbTable = 'world';
 
 exports.sqlEscape = function(stringThis){
+	console.log(stringThis);
 	if(typeof(stringThis)== 'undefined'){
 		return '';
 	}
-    return stringThis.replace(/['";]/g, function (match) {
+	stringThis = stringThis.replace(/\\[\[\|\?\^\\]/g, function (match) {
+		console.log('sqlEscape-match:'+match);
+		console.log('sqlEscape-match[1]:'+match[1]);
+        return match.length == 1 ? match : match[1];
+    });
+	
+    stringThis = stringThis.replace(/['";\\]/g, function (match) {
         return '\\' + match;
     });
+
+	console.log(stringThis);
+	return stringThis;
+	
 };
 
 exports.sqlQuery = function(databaseName,SQLquery, boolReturn, callback){
