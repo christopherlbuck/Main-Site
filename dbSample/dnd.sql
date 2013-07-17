@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.6.11, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 5.6.12, for Win64 (x86_64)
 --
 -- Host: localhost    Database: dnd
 -- ------------------------------------------------------
--- Server version	5.6.11
+-- Server version	5.6.12
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -14,6 +14,33 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `justin`
+--
+
+DROP TABLE IF EXISTS `justin`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `justin` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
+  `playerName` varchar(255) DEFAULT NULL,
+  `value` int(11) DEFAULT '0',
+  `trained` tinyint(1) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `justin`
+--
+
+LOCK TABLES `justin` WRITE;
+/*!40000 ALTER TABLE `justin` DISABLE KEYS */;
+/*!40000 ALTER TABLE `justin` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `notes`
@@ -29,7 +56,7 @@ CREATE TABLE `notes` (
   `dateTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `submittedByUserID` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -38,7 +65,7 @@ CREATE TABLE `notes` (
 
 LOCK TABLES `notes` WRITE;
 /*!40000 ALTER TABLE `notes` DISABLE KEYS */;
-INSERT INTO `notes` VALUES (24,'Test what?',NULL,'2013-06-21 20:59:18',1),(25,'You tested it and it worked!',NULL,'2013-06-21 21:00:56',1),(26,'You keep crashing it!',NULL,'2013-06-21 21:05:31',1),(27,'Jesus debug too?',NULL,'2013-06-21 21:07:12',1),(28,'test this again',NULL,'2013-06-21 22:47:41',1),(29,'Should work now',NULL,'2013-06-21 22:49:49',1),(30,'Surprisingly it does work again!',NULL,'2013-06-21 22:50:07',1),(31,'Still works',NULL,'2013-06-21 22:55:52',1);
+INSERT INTO `notes` VALUES (24,'Test what?',NULL,'2013-06-21 20:59:18',1),(25,'You tested it and it worked!',NULL,'2013-06-21 21:00:56',1),(26,'You keep crashing it!',NULL,'2013-06-21 21:05:31',1),(27,'Jesus debug too?',NULL,'2013-06-21 21:07:12',1),(28,'test this again',NULL,'2013-06-21 22:47:41',1),(29,'Should work now',NULL,'2013-06-21 22:49:49',1),(30,'Surprisingly it does work again!',NULL,'2013-06-21 22:50:07',1),(31,'Still works',NULL,'2013-06-21 22:55:52',1),(32,'test',NULL,'2013-06-22 19:41:47',1),(33,'Does this still work?',NULL,'2013-06-22 19:52:06',1),(34,'Testing Posts',NULL,'2013-06-22 21:24:52',1),(35,'testing postsDND\r\n',NULL,'2013-06-22 21:30:36',1),(36,'test',NULL,'2013-06-22 22:19:48',1),(37,'testerqwerqwer',NULL,'2013-06-22 22:40:55',1);
 /*!40000 ALTER TABLE `notes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -79,7 +106,7 @@ CREATE TABLE `notestag` (
   `name` varchar(255) NOT NULL,
   `active` int(11) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -88,36 +115,8 @@ CREATE TABLE `notestag` (
 
 LOCK TABLES `notestag` WRITE;
 /*!40000 ALTER TABLE `notestag` DISABLE KEYS */;
-INSERT INTO `notestag` VALUES (1,'Buck',1),(2,'Taco',1),(3,'thistag',1),(4,'Archive',1),(5,'Food',1);
+INSERT INTO `notestag` VALUES (1,'Buck',1),(2,'Taco',1),(3,'thistag',1),(4,'Archive',1),(5,'Food',1),(6,'Testing Tag post',1),(7,'still test',1),(8,'sdfasdfasdf',1);
 /*!40000 ALTER TABLE `notestag` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `skills`
---
-
-DROP TABLE IF EXISTS `skills`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `skills` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) DEFAULT NULL,
-  `player` varchar(255) DEFAULT 'None',
-  `value` int(11) DEFAULT '0',
-  `trained` tinyint(1) DEFAULT '0',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `skills`
---
-
-LOCK TABLES `skills` WRITE;
-/*!40000 ALTER TABLE `skills` DISABLE KEYS */;
-INSERT INTO `skills` VALUES (1,'Acrobatics','None',0,0),(2,'Arcana','None',0,0),(3,'Athletics','None',0,0),(4,'Bluff','None',0,0),(5,'Diplomacy','None',0,0),(6,'Dungeoneering','None',0,0),(7,'Endurance','None',0,0),(8,'Heal','None',0,0),(9,'History','None',0,0),(10,'Insight','None',0,0),(11,'Intimidate','None',0,0),(12,'Leadership','None',0,0),(13,'Nature','None',0,0),(14,'Perception','None',0,0),(15,'Religion','None',0,0),(16,'Stealth','None',0,0),(17,'Streetwise','None',0,0),(18,'Thievery','None',0,0),(19,'Tinkering','None',0,0);
-/*!40000 ALTER TABLE `skills` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -129,4 +128,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-06-23 15:14:39
+-- Dump completed on 2013-07-17 19:49:01
