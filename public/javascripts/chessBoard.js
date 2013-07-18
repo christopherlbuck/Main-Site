@@ -303,18 +303,18 @@ var Chess = (function ($) {
             })
             .click(reDrawBoard)
             .appendTo(boardElement);
-		// Debug me
-        $('<input>')
-            .attr('type', 'button')
-            .attr('value', 'debugItYourself')
-            .attr('id', 'debugItYourself	')
-            .css({
-                position: 'absolute',
-                left: cols * tileWidth,
-                top: 3 * tileHeight
-            })
-            .click(debugItYourself)
-            .appendTo(boardElement);
+		// // Debug me
+        // $('<input>')
+            // .attr('type', 'button')
+            // .attr('value', 'debugItYourself')
+            // .attr('id', 'debugItYourself	')
+            // .css({
+                // position: 'absolute',
+                // left: cols * tileWidth,
+                // top: 3 * tileHeight
+            // })
+            // .click(debugItYourself)
+            // .appendTo(boardElement);
     };
 	var debugItYourself = function(){
 		alert("originalState:\n"+originalState+"\n thisMoveState\n"+thisMoveState);
@@ -324,6 +324,10 @@ var Chess = (function ($) {
 		//alert(originalState);
 	}
 	var submitThisMove = function(){
+		if(!myTurn){
+			alert('Not your turn');
+			return;
+		}
 		deltaMovement();
 		//alert(originalState + '\n' + thisMoveState);
 		
@@ -462,17 +466,21 @@ var Chess = (function ($) {
             draggableInitialized = true;
         }
 		
-        if (turn === classes.white) {
+        if (turn === classes.white && myTurn) {
             // remove the previous players draggable
             $('.ui-draggable.' + classes.black).draggable('disable');
             $('.ui-draggable.' + classes.white).draggable('enable');
 			debugger;
         } 
-		else if(turn === classes.black){
+		else if(turn === classes.black && myTurn){
             // remove the previous players draggable
             $('.ui-draggable.' + classes.white).draggable('disable');
             $('.ui-draggable.' + classes.black).draggable('enable');
         }
+		else{
+			$('.ui-draggable.' + classes.white).draggable('disable');
+            $('.ui-draggable.' + classes.black).draggable('disable');
+		}
 		debugger;
     };
 	var setCharAt = function (str,index,chr) {

@@ -4,4 +4,5 @@ block content
 	- if(typeof(JSONDoc)!='undefined')
 		script(type= "text/javascript")
 			var initialDocument = JSON.parse( !{JSON.stringify(JSONDoc)} );
+			var myTurn = !{myTurn};
 	div(id='board')

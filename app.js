@@ -86,10 +86,10 @@ app.get('/login',routes.login)
 app.get('/dnd/skill',ensureAuthenticated, routesDND.dndSkills);
 app.get('/dnd/notes',ensureAuthenticated, routesDND.dndNotes);
 //Games
-app.get('/game/chess', ensureAuthenticated , routesGame.gameChess);
+//app.get('/game/chess', ensureAuthenticated , routesGame.gameChess);
 app.get('/game/create',ensureAuthenticated, routesGame.gameCreation);
 app.get('/game/myGames',ensureAuthenticated, routesGame.myGamesMultiTable);
-app.get('/game/chess1', ensureAuthenticated, routesGame.gameChessTest);
+app.get('/game/chess', ensureAuthenticated, routesGame.gameChessTest);
 
 //Get every other page
 //Having issues with the catch all blocks public requests

@@ -163,7 +163,7 @@ exports.gameChessTest = function(req, res){
 	var JSONdoc = new Array();
 	
 	var thisCallBack = function(){
-		resRenderUserName(req,res,'boards',{title:'Game Test', CSSs : arrCSSs, JSs : arrJSs, JSONDoc: JSON.stringify(JSONdoc)});
+		resRenderUserName(req,res,'boards',{title:'Game Test', CSSs : arrCSSs, JSs : arrJSs, JSONDoc: JSON.stringify(JSONdoc), myTurn:myMove});
 	}
 	
 	//Populate CSS array
@@ -178,9 +178,15 @@ exports.gameChessTest = function(req, res){
 	
 	//Populate JSONdoc
 	var sql = 'select gameState, id, specialPieces, winner, player1ID, player2ID, moveNumber from chessgamestate where id='+url.parse(req.url, true).query.id;
-
+	
+	var myMove =false;
+	
+	
 	sqlQuery('games',sql,true,function(fields,results){
 		JSONdoc=results[0];
+		if((results[0].moveNumber%2==0 && results[0].player1ID==req.session.user.id) || (results[0].moveNumber%2==1 && results[0].player2ID==req.session.user.id)){
+			myMove=true;
+		}
 		thisCallBack()
 	});
 
