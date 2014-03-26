@@ -21,12 +21,12 @@ create database serverinfo;
 create database games;
 create database dnd;
 
-Step 5
+Step 6 
 Import database
 mysql.exe -u <your username> -p dnd < <dnd sql file>
 mysql.exe -u <your username> -p games < <games sql file>
 mysql.exe -u <your username> -p serverinfo < <serverinfo sql file>
 
-Step 7
+Step 7 (Required only for updating database tables)
 Export database
 mysqldump.exe -u root -p <*databasename*> > <*location*>\<*file*>.sql
